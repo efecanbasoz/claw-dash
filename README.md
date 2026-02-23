@@ -4,6 +4,9 @@ Claw Dash is a self-hosted operations dashboard for monitoring and managing an O
 
 It provides pages and APIs for sessions, usage stats, cron jobs, memory files, git activity, and security posture snapshots.
 
+<img width="2163" height="1103" alt="Claw-Dash" src="https://github.com/user-attachments/assets/e18078af-2ba7-4496-ad82-108aa4e019a8" />
+
+
 ## Highlights
 
 - Session and token/cost analytics
