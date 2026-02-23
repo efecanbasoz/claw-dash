@@ -1,0 +1,13 @@
+import { NextResponse } from 'next/server';
+import { getSystemHealth } from '@/lib/system';
+
+export const dynamic = 'force-dynamic';
+
+export async function GET() {
+  try {
+    const health = await getSystemHealth();
+    return NextResponse.json(health);
+  } catch (e) {
+    return NextResponse.json({ error: String(e) }, { status: 500 });
+  }
+}
