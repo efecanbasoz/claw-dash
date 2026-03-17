@@ -35,6 +35,8 @@ Enable them explicitly with:
 ENABLE_DANGEROUS_OPERATIONS=true
 ```
 
+The dashboard also supports built-in Basic Auth. For any deployment that enables dangerous operations, auth must be configured or the sensitive endpoints will refuse to run.
+
 ## Environment Variables
 
 Create a `.env.local` file (or export variables in your shell):
@@ -46,6 +48,9 @@ OPENCLAW_CONFIG_FILE=$HOME/.openclaw/openclaw.json
 CLAW_WORKSPACE_DIR=$HOME/.openclaw/workspace
 CLAW_REPOS_DIR=$HOME/.openclaw/workspace/repos
 ENABLE_DANGEROUS_OPERATIONS=false
+DASHBOARD_AUTH_ENABLED=true
+DASHBOARD_AUTH_USERNAME=admin
+DASHBOARD_AUTH_PASSWORD=change-me
 ```
 
 Optional:
@@ -75,12 +80,15 @@ npm run dev
 npm run build
 npm run start
 npm run lint
+npm run typecheck
+npm run test
 ```
 
 ## Threat Model Notes
 
 - Route handlers read local files and system metadata.
 - Some handlers execute local commands.
+- Dangerous operations now require both `ENABLE_DANGEROUS_OPERATIONS=true` and dashboard auth credentials.
 - Do not expose this dashboard publicly without network/auth controls.
 - Prefer running behind VPN, reverse proxy auth, or private network boundaries.
 
