@@ -41,11 +41,10 @@ export async function POST(req: Request) {
     const body = await req.json();
     const incoming = stripSensitive(body?.config || {});
 
-    const file = OPENCLAW_CONFIG_FILE;
-    const current = JSON.parse(await readFile(file, 'utf-8'));
+    const current = JSON.parse(await readFile(OPENCLAW_CONFIG_FILE, 'utf-8'));
     const merged = mergeWithoutSensitive(current, incoming);
 
-    await writeFile(file, `${JSON.stringify(merged, null, 2)}\n`, 'utf-8');
+    await writeFile(OPENCLAW_CONFIG_FILE, `${JSON.stringify(merged, null, 2)}\n`, 'utf-8');
     return NextResponse.json({ ok: true });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });

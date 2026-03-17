@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import { readdir, stat } from 'fs/promises';
 import path from 'path';
 import { REPOS_DIR } from '@/lib/constants';
@@ -22,9 +22,10 @@ export async function GET() {
       const s = await stat(repoPath).catch(() => null);
       if (!s?.isDirectory()) continue;
       try {
-        const gitLog = execSync(
-          `git -C "${repoPath}" log --oneline --format="%H|%s|%aI|%an" -20 2>/dev/null`,
-          { encoding: 'utf-8', timeout: 5000 }
+        const gitLog = execFileSync(
+          'git',
+          ['-C', repoPath, 'log', '--oneline', '--format=%H|%s|%aI|%an', '-20'],
+          { encoding: 'utf-8', timeout: 5000, stdio: ['ignore', 'pipe', 'ignore'] }
         ).trim();
         if (!gitLog) continue;
         const commits = gitLog.split('\n').map(line => {
