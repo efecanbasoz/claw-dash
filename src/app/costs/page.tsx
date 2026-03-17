@@ -3,10 +3,11 @@
 import { useFetch } from '@/hooks/use-fetch';
 import { GlassCard } from '@/components/glass-card';
 import { AnimatedNumber } from '@/components/animated-number';
+import { ClientResponsiveContainer } from '@/components/client-responsive-container';
 import { formatNumber, formatCurrency } from '@/lib/format';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
-  XAxis, YAxis, Tooltip, ResponsiveContainer
+  XAxis, YAxis, Tooltip
 } from 'recharts';
 
 interface Stats {
@@ -49,7 +50,7 @@ export default function CostsPage() {
         <GlassCard delay={0.4}>
           <h3 className="text-sm font-medium mb-4">Daily Cost Trend</h3>
           <div className="h-64">
-            <ResponsiveContainer>
+            <ClientResponsiveContainer>
               <AreaChart data={data?.dailyCosts || []}>
                 <defs>
                   <linearGradient id="costGrad" x1="0" y1="0" x2="0" y2="1">
@@ -62,21 +63,21 @@ export default function CostsPage() {
                 <Tooltip contentStyle={{ background: 'var(--color-background)', border: '1px solid var(--color-border)', borderRadius: 8, color: 'var(--color-foreground)' }} formatter={(v) => [formatCurrency(Number(v)), 'Cost']} />
                 <Area type="monotone" dataKey="cost" stroke="oklch(0.650 0.180 260)" fill="url(#costGrad)" />
               </AreaChart>
-            </ResponsiveContainer>
+            </ClientResponsiveContainer>
           </div>
         </GlassCard>
 
         <GlassCard delay={0.5}>
           <h3 className="text-sm font-medium mb-4">Cost by Model</h3>
           <div className="h-48">
-            <ResponsiveContainer>
+            <ClientResponsiveContainer>
               <PieChart>
                 <Pie data={modelData} dataKey="cost" nameKey="name" cx="50%" cy="50%" outerRadius={70}>
                   {modelData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                 </Pie>
                 <Tooltip formatter={(v) => formatCurrency(Number(v))} contentStyle={{ background: 'var(--color-background)', border: '1px solid var(--color-border)', borderRadius: 8, color: 'var(--color-foreground)' }} />
               </PieChart>
-            </ResponsiveContainer>
+            </ClientResponsiveContainer>
           </div>
           <div className="mt-3 space-y-1.5">
             {modelData.map((m, i) => (
@@ -95,14 +96,14 @@ export default function CostsPage() {
       <GlassCard delay={0.6}>
         <h3 className="text-sm font-medium mb-4">Cost by Agent</h3>
         <div className="h-64">
-          <ResponsiveContainer>
+          <ClientResponsiveContainer>
             <BarChart data={agentData}>
               <XAxis dataKey="name" tick={{ fontSize: 10 }} />
               <YAxis tick={{ fontSize: 10 }} tickFormatter={v => `$${v}`} />
               <Tooltip contentStyle={{ background: 'var(--color-background)', border: '1px solid var(--color-border)', borderRadius: 8, color: 'var(--color-foreground)' }} formatter={(v) => [formatCurrency(Number(v)), 'Cost']} />
               <Bar dataKey="cost" fill="oklch(0.650 0.180 260)" radius={[4, 4, 0, 0]} />
             </BarChart>
-          </ResponsiveContainer>
+          </ClientResponsiveContainer>
         </div>
       </GlassCard>
 

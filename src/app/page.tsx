@@ -3,8 +3,9 @@
 import { useFetch } from '@/hooks/use-fetch';
 import { GlassCard } from '@/components/glass-card';
 import { AnimatedNumber } from '@/components/animated-number';
+import { ClientResponsiveContainer } from '@/components/client-responsive-container';
 import { Activity, MessageSquare, Coins, Zap, Cpu, HardDrive, MemoryStick } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
 import { formatDistanceToNow } from 'date-fns';
 
 interface Stats {
@@ -63,7 +64,7 @@ export default function Dashboard() {
         <GlassCard className="lg:col-span-2" delay={0.4}>
           <h3 className="text-sm font-medium mb-4">Token Usage (30 days)</h3>
           <div className="h-48">
-            <ResponsiveContainer>
+            <ClientResponsiveContainer>
               <AreaChart data={stats?.dailyCosts || []}>
                 <defs>
                   <linearGradient id="tokenGrad" x1="0" y1="0" x2="0" y2="1">
@@ -76,7 +77,7 @@ export default function Dashboard() {
                 <Tooltip contentStyle={{ background: 'rgba(0,0,0,0.8)', border: 'none', borderRadius: 8, fontSize: 12 }} />
                 <Area type="monotone" dataKey="tokens" stroke="oklch(0.650 0.180 260)" fill="url(#tokenGrad)" />
               </AreaChart>
-            </ResponsiveContainer>
+            </ClientResponsiveContainer>
           </div>
         </GlassCard>
 

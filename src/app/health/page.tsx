@@ -3,8 +3,9 @@
 import { useFetch } from '@/hooks/use-fetch';
 import { GlassCard } from '@/components/glass-card';
 import { AnimatedNumber } from '@/components/animated-number';
+import { ClientResponsiveContainer } from '@/components/client-responsive-container';
 import { formatNumber } from '@/lib/format';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 import { Cpu, MemoryStick, HardDrive, Thermometer, Clock } from 'lucide-react';
 
 interface Health {
@@ -64,14 +65,14 @@ export default function HealthPage() {
         <GlassCard delay={0.5}>
           <h3 className="text-sm font-medium mb-4">CPU Per Core</h3>
           <div className="h-48">
-            <ResponsiveContainer>
+            <ClientResponsiveContainer>
               <BarChart data={coreData}>
                 <XAxis dataKey="name" tick={{ fontSize: 10 }} />
                 <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} />
                 <Tooltip contentStyle={{ background: 'rgba(0,0,0,0.8)', border: 'none', borderRadius: 8 }} />
                 <Bar dataKey="usage" fill="oklch(0.650 0.180 260)" radius={[4, 4, 0, 0]} />
               </BarChart>
-            </ResponsiveContainer>
+            </ClientResponsiveContainer>
           </div>
         </GlassCard>
 
