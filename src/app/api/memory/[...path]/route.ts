@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { readFile } from 'fs/promises';
-import path from 'path';
 import { WORKSPACE_DIR, SENSITIVE_FILES } from '@/lib/constants';
 import { requireDangerousOperationsEnabled } from '@/lib/guards';
+import { resolvePathWithinRoot } from '@/lib/paths';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,16 +12,15 @@ export async function GET(_req: Request, { params }: { params: Promise<{ path: s
 
   const { path: segments } = await params;
   const relPath = segments.join('/');
-
-  // Security check
-  if (SENSITIVE_FILES.some(f => relPath.includes(f)) || relPath.includes('..')) {
-    return NextResponse.json({ error: 'Access denied' }, { status: 403 });
-  }
+  const resolved = resolvePathWithinRoot(WORKSPACE_DIR, relPath, {
+    allowedExtensions: ['.md'],
+    blockedBasenames: SENSITIVE_FILES,
+  });
+  if (!resolved) return NextResponse.json({ error: 'Access denied' }, { status: 403 });
 
   try {
-    const fullPath = path.join(WORKSPACE_DIR, relPath);
-    const content = await readFile(fullPath, 'utf-8');
-    return NextResponse.json({ path: relPath, content });
+    const content = await readFile(resolved.fullPath, 'utf-8');
+    return NextResponse.json({ path: resolved.relativePath, content });
   } catch {
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
