@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED: Use superpowers:subagent-driven-development (if subagents available) or superpowers:executing-plans to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Upgrade `shadcn` to clear the remaining transitive `hono` alert without breaking the dashboard toolchain.
+**Goal:** Upgrade `shadcn` and refresh the affected transitive packages to clear the remaining dev-only security alerts without breaking the dashboard toolchain.
 
-**Architecture:** Treat the work as a dependency remediation with a small regression guard. First add a failing dependency-security test, then upgrade the CLI and only patch files that the new version actually affects, then run the full verification and remote alert check.
+**Architecture:** Treat the work as a dependency remediation with a small regression guard. First add a failing dependency-security test, then upgrade the CLI, then refresh the vulnerable transitive entries that remain pinned below their patched ranges, and only patch local files if the new CLI version actually affects them.
 
 **Tech Stack:** Next.js 16, React 19, TypeScript 5, Node test runner, npm, GitHub Dependabot API
 
@@ -23,7 +23,7 @@
 
 ## Chunk 1: Add the regression guard
 
-### Task 1: Detect vulnerable installed `hono`
+### Task 1: Detect vulnerable installed transitive packages
 
 **Files:**
 - Test: `src/lib/dependency-security.test.mts`
@@ -48,7 +48,7 @@ test("installed hono is at least 4.12.7", () => {
 - [ ] **Step 2: Run test to verify it fails**
 
 Run: `npm test -- --test-name-pattern="installed hono is at least 4.12.7"`
-Expected: FAIL because the current installed version is `4.12.5`
+Expected: FAIL because the installed versions are below the patched minimums
 
 - [ ] **Step 3: Commit**
 
@@ -81,9 +81,15 @@ Run:
 npm ls shadcn hono
 ```
 
-Expected: `shadcn@4.0.8` and `hono` at `4.12.7` or newer.
+Expected: `shadcn@4.0.8`, but the transitive packages may still need a follow-up patch-level refresh.
 
-- [ ] **Step 3: Apply the minimal compatibility fix if needed**
+- [ ] **Step 3: Refresh vulnerable transitive packages and apply the minimal compatibility fix if needed**
+
+Run:
+
+```bash
+npm update hono express-rate-limit flatted
+```
 
 Examples:
 - Update config shape in `components.json`
@@ -118,7 +124,7 @@ npm test
 npm run typecheck
 npm run lint
 npm run build
-npm audit --omit=dev
+npm audit
 ```
 
 Expected: all commands exit `0`
@@ -131,7 +137,7 @@ Run:
 gh api repos/sirkhet-dev/claw-dash/dependabot/alerts --jq '.[] | select(.state=="open") | .dependency.package.name'
 ```
 
-Expected: no open `hono` alert remains
+Expected: no open `hono`, `express-rate-limit`, or `flatted` alert remains once the change is pushed
 
 - [ ] **Step 3: Commit verification-only follow-up if any fallout fix was required**
 
