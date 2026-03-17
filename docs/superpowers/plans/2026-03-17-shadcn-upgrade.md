@@ -36,18 +36,47 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-test("installed hono is at least 4.12.7", () => {
-  const packageLockPath = join(process.cwd(), "package-lock.json");
-  const packageLock = JSON.parse(readFileSync(packageLockPath, "utf8"));
-  const honoVersion = packageLock.packages["node_modules/hono"]?.version;
+function parseVersion(version: string) {
+  return version.split(".").map((part) => Number.parseInt(part, 10));
+}
 
-  assert.equal(honoVersion, "4.12.7");
+function isVersionAtLeast(actual: string, minimum: string) {
+  const actualParts = parseVersion(actual);
+  const minimumParts = parseVersion(minimum);
+  const length = Math.max(actualParts.length, minimumParts.length);
+
+  for (let index = 0; index < length; index += 1) {
+    const actualPart = actualParts[index] ?? 0;
+    const minimumPart = minimumParts[index] ?? 0;
+
+    if (actualPart > minimumPart) return true;
+    if (actualPart < minimumPart) return false;
+  }
+
+  return true;
+}
+
+function versionOf(packageName: string) {
+  const packageJsonPath = join(process.cwd(), "node_modules", packageName, "package.json");
+  return JSON.parse(readFileSync(packageJsonPath, "utf8")).version;
+}
+
+test("installed hono is at least 4.12.7", () => {
+  assert.equal(isVersionAtLeast(versionOf("hono"), "4.12.7"), true);
+});
+
+test("installed express-rate-limit is at least 8.2.2", () => {
+  assert.equal(isVersionAtLeast(versionOf("express-rate-limit"), "8.2.2"), true);
+});
+
+test("installed flatted is at least 3.4.0", () => {
+  assert.equal(isVersionAtLeast(versionOf("flatted"), "3.4.0"), true);
 });
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `npm test -- --test-name-pattern="installed hono is at least 4.12.7"`
+Run: `npm test -- src/lib/dependency-security.test.mts`
 Expected: FAIL because the installed versions are below the patched minimums
 
 - [ ] **Step 3: Commit**
@@ -78,10 +107,10 @@ Change `shadcn` from `^3.8.4` to `^4.0.8` in `package.json`, then run `npm insta
 Run:
 
 ```bash
-npm ls shadcn hono
+npm ls shadcn hono express-rate-limit flatted
 ```
 
-Expected: `shadcn@4.0.8`, but the transitive packages may still need a follow-up patch-level refresh.
+Expected: `shadcn@4.0.8`, with any vulnerable transitive versions clearly visible before the refresh step.
 
 - [ ] **Step 3: Refresh vulnerable transitive packages and apply the minimal compatibility fix if needed**
 
@@ -98,7 +127,7 @@ Examples:
 
 - [ ] **Step 4: Run the regression test to verify it passes**
 
-Run: `npm test -- --test-name-pattern="installed hono is at least 4.12.7"`
+Run: `npm test -- src/lib/dependency-security.test.mts`
 Expected: PASS
 
 - [ ] **Step 5: Commit**
