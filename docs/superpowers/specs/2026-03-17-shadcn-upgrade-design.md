@@ -8,7 +8,7 @@ Remove the remaining `claw-dash` dev-only Dependabot alert chain by upgrading th
 
 - `shadcn` is pinned at `^3.8.4` in `package.json`.
 - The open alert is a development-only transitive vulnerability: `shadcn -> @modelcontextprotocol/sdk -> hono@4.12.5`.
-- The same dependency subtree also carries patch-level fixes for `express-rate-limit` and `flatted`, so lockfile refresh must be verified rather than assumed.
+- The `shadcn` subtree also carries a patch-level fix for `express-rate-limit`, and the repo's ESLint chain (`eslint -> file-entry-cache -> flat-cache -> flatted`) carries a separate patch-level fix for `flatted`, so the full installed graph must be verified rather than assumed.
 - `components.json` and `src/app/globals.css` already follow the current shadcn project shape, so the likely work is dependency and lockfile refresh rather than component rewrites.
 
 ## Options Considered
