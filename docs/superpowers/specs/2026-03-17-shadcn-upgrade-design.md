@@ -45,4 +45,4 @@ If the `shadcn` major update changes any local assumptions, only the directly af
 - `npm run build`
 - `npm audit`
 - `npm ls shadcn hono express-rate-limit flatted`
-- `gh api repos/sirkhet-dev/claw-dash/dependabot/alerts`
+- `gh api repos/efecanbasoz/claw-dash/dependabot/alerts`

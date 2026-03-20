@@ -163,7 +163,7 @@ Expected: all commands exit `0`
 Run:
 
 ```bash
-gh api repos/sirkhet-dev/claw-dash/dependabot/alerts --jq '.[] | select(.state=="open") | .dependency.package.name'
+gh api repos/efecanbasoz/claw-dash/dependabot/alerts --jq '.[] | select(.state=="open") | .dependency.package.name'
 ```
 
 Expected: no open `hono`, `express-rate-limit`, or `flatted` alert remains once the change is pushed
