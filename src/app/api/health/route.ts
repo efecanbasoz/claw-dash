@@ -12,6 +12,7 @@ export async function GET() {
     const health = await getSystemHealth();
     return NextResponse.json(health);
   } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+    console.error('health failed:', e);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -11,6 +11,7 @@ export async function GET() {
   try {
     return NextResponse.json(getExposureSecurity());
   } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+    console.error('security/exposure failed:', e);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

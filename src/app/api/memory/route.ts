@@ -35,6 +35,7 @@ export async function GET() {
 
     return NextResponse.json({ files });
   } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+    console.error('memory failed:', e);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

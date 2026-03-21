@@ -14,6 +14,7 @@ export async function GET(req: Request) {
     const messages = await getRecentMessages(limit);
     return NextResponse.json({ messages });
   } catch (e) {
-    return NextResponse.json({ error: String(e), messages: [] });
+    console.error('feed failed:', e);
+    return NextResponse.json({ error: 'Internal server error', messages: [] }, { status: 500 });
   }
 }

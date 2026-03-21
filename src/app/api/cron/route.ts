@@ -24,6 +24,7 @@ export async function GET() {
     } catch { /* */ }
     return NextResponse.json({ ...data, runs });
   } catch (e) {
-    return NextResponse.json({ jobs: [], runs: [], error: String(e) });
+    console.error('cron failed:', e);
+    return NextResponse.json({ jobs: [], runs: [], error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -19,6 +19,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     if (!detail) return NextResponse.json({ error: 'Not found' }, { status: 404 });
     return NextResponse.json(detail);
   } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+    console.error('sessions/[id] failed:', e);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

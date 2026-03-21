@@ -15,6 +15,7 @@ export async function POST(req: Request) {
     }
     return NextResponse.json({ error: 'Unknown service' }, { status: 400 });
   } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+    console.error('services/restart failed:', e);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

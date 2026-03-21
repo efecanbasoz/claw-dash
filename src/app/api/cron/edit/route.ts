@@ -37,6 +37,7 @@ export async function POST(req: Request) {
     const out = await run(args);
     return NextResponse.json({ ok: true, output: out });
   } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+    console.error('cron/edit failed:', e);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
