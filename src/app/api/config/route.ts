@@ -29,6 +29,7 @@ export async function GET() {
     const parsed = JSON.parse(raw);
     return NextResponse.json({ config: sanitize(parsed) });
   } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+    console.error('config failed:', e);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

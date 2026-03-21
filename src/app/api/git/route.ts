@@ -38,6 +38,7 @@ export async function GET() {
 
     return NextResponse.json({ repos });
   } catch (e) {
-    return NextResponse.json({ error: String(e), repos: [] });
+    console.error('git failed:', e);
+    return NextResponse.json({ error: 'Internal server error', repos: [] }, { status: 500 });
   }
 }

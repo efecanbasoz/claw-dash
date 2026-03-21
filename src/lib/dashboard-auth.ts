@@ -1,4 +1,4 @@
-import { timingSafeEqual } from 'node:crypto';
+import { timingSafeEqual, createHash } from 'node:crypto';
 
 export interface DashboardAuthConfig {
   enabled: boolean;
@@ -13,10 +13,10 @@ function getEnvValue(value: string | undefined): string {
   return value?.trim() ?? '';
 }
 
+// SEC-005: Compare fixed-length hashes to avoid length-based timing leaks
 function safeEqual(left: string, right: string): boolean {
-  const a = Buffer.from(left);
-  const b = Buffer.from(right);
-  if (a.length !== b.length) return false;
+  const a = createHash('sha256').update(left).digest();
+  const b = createHash('sha256').update(right).digest();
   return timingSafeEqual(a, b);
 }
 
@@ -48,7 +48,10 @@ export function isAuthorizedRequest(
 
     const username = decoded.slice(0, delimiter);
     const password = decoded.slice(delimiter + 1);
-    return safeEqual(username, config.username) && safeEqual(password, config.password);
+    // SEC-005: Evaluate both checks to prevent short-circuit timing leak
+    const uOk = safeEqual(username, config.username);
+    const pOk = safeEqual(password, config.password);
+    return uOk && pOk;
   } catch {
     return false;
   }

@@ -47,6 +47,7 @@ export async function POST(req: Request) {
     await writeFile(OPENCLAW_CONFIG_FILE, `${JSON.stringify(merged, null, 2)}\n`, 'utf-8');
     return NextResponse.json({ ok: true });
   } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+    console.error('config/save failed:', e);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

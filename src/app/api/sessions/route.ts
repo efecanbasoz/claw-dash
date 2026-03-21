@@ -12,6 +12,7 @@ export async function GET() {
     const sessions = await getAllSessions();
     return NextResponse.json({ sessions });
   } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+    console.error('sessions failed:', e);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

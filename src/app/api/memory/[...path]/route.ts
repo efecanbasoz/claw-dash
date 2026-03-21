@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { readFile } from 'fs/promises';
-import { WORKSPACE_DIR, SENSITIVE_FILES } from '@/lib/constants';
+import { MEMORY_DIR, SENSITIVE_FILES } from '@/lib/constants';
 import { requireDangerousOperationsEnabled } from '@/lib/guards';
 import { resolvePathWithinRoot } from '@/lib/paths';
 
@@ -12,7 +12,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ path: s
 
   const { path: segments } = await params;
   const relPath = segments.join('/');
-  const resolved = resolvePathWithinRoot(WORKSPACE_DIR, relPath, {
+  const resolved = resolvePathWithinRoot(MEMORY_DIR, relPath, {
     allowedExtensions: ['.md'],
     blockedBasenames: SENSITIVE_FILES,
   });
