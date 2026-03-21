@@ -3,7 +3,36 @@ import type { NextRequest } from 'next/server';
 
 import { getDashboardAuthConfig, isAuthorizedRequest } from '@/lib/dashboard-auth';
 
+// SEC-002: Block cross-site POST/PUT/DELETE requests to prevent CSRF
+function isCrossSiteMutation(request: NextRequest): boolean {
+  const method = request.method.toUpperCase();
+  if (method === 'GET' || method === 'HEAD' || method === 'OPTIONS') return false;
+
+  const secFetchSite = request.headers.get('sec-fetch-site');
+  if (secFetchSite && secFetchSite !== 'same-origin' && secFetchSite !== 'none') {
+    return true;
+  }
+
+  const origin = request.headers.get('origin');
+  if (origin) {
+    const requestHost = request.headers.get('host') || request.nextUrl.host;
+    try {
+      const originHost = new URL(origin).host;
+      if (originHost !== requestHost) return true;
+    } catch {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 export function middleware(request: NextRequest) {
+  // SEC-002: CSRF protection for state-changing requests
+  if (isCrossSiteMutation(request)) {
+    return NextResponse.json({ error: 'Cross-site request blocked' }, { status: 403 });
+  }
+
   const auth = getDashboardAuthConfig();
   if (!auth.enabled) {
     return NextResponse.next();

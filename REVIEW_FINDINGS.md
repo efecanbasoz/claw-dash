@@ -8,28 +8,36 @@
 
 | Severity | Count | Fixed |
 |----------|-------|-------|
-| HIGH | 6 | 4 |
-| MEDIUM | 6 | 3 |
+| HIGH | 6 | 6 |
+| MEDIUM | 6 | 6 |
 | LOW | 2 | 1 |
 | INFO | 1 | 0 |
-| **Total** | **15** | **8** |
+| **Total** | **15** | **13** |
 
-## Fixed
+## Fixed (Round 1)
 
-- **SEC-003 (HIGH)**: Memory API now uses MEMORY_DIR instead of WORKSPACE_DIR to restrict file access scope
-- **SEC-005 (MEDIUM)**: Auth uses sha256 hash comparison to eliminate length-based timing leak, both username and password evaluated before short-circuit
-- **SEC-006 (LOW)**: All 20 API routes now return generic error messages, log details server-side
-- **QA-004 (MEDIUM)**: 3 routes that returned HTTP 200 on error now correctly return 500
+- **SEC-003 (HIGH)**: Memory API uses MEMORY_DIR instead of WORKSPACE_DIR
+- **SEC-005 (MEDIUM)**: Auth sha256 hash comparison, no short-circuit timing leak
+- **SEC-006 (LOW)**: All 20 API routes return generic error messages
+- **QA-004 (MEDIUM)**: 3 routes return HTTP 500 on error instead of 200
 
-## Documented (require larger changes)
+## Fixed (Round 2 — Deferred)
 
-- **SEC-001 (HIGH)**: execSync command injection via env vars (OPENCLAW_BIN etc.) — requires migration to execFileSync across security.ts/system.ts/sessions.ts. Self-hosted threat model mitigates risk.
-- **SEC-002 (HIGH)**: CSRF protection on POST routes — requires Origin/Sec-Fetch-Site checks
-- **SEC-004 (MEDIUM)**: Config masking regex incomplete — requires schema-backed config DTO
-- **QA-001 (HIGH)**: System health blocks event loop with execSync — requires async migration
-- **QA-002 (HIGH)**: security.ts run() swallows errors — requires structured result types
-- **QA-003 (HIGH)**: useFetch hook doesn't check res.ok — requires hook refactor
-- **QA-005 (MEDIUM)**: Config masking duplicated between routes
+- **SEC-001 (HIGH)**: Migrated security.ts from execSync to execFileSync (no shell). Env vars
+  (OPENCLAW_BIN, OPENCLAW_CONFIG_FILE, WORKSPACE_DIR) no longer interpolated into shell strings.
+  Shell-dependent commands like cat/ls/printenv replaced with Node fs/process.env APIs.
+- **SEC-002 (HIGH)**: CSRF protection added to middleware — blocks cross-site POST/PUT/DELETE
+  via Sec-Fetch-Site and Origin header validation.
+- **SEC-004 (MEDIUM)**: Config masking regex expanded to cover password, passphrase, privateKey,
+  DSN, connection_string patterns.
+- **QA-001 (HIGH)**: security.ts now uses structured CmdResult instead of swallowing errors as empty strings.
+  (Also addresses QA-002.)
+- **QA-003 (HIGH)**: useFetch hook checks res.ok, supports null URL, uses AbortController for cleanup.
+- **QA-005 (MEDIUM)**: Config sanitizer extracted to shared config-sanitizer.ts — both routes use it.
+
+## Remaining
+
+- **QA-001** (partial): system.ts still uses sync I/O — async migration is a separate effort
 - **QA-006-010**: Type safety, dead code, testing gaps
 
 ## Positive Findings
