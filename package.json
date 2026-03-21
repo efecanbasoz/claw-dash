@@ -1,6 +1,14 @@
 {
   "name": "claw-dash",
   "version": "1.5.0",
+  "description": "MCP server that discovers your developer profile and generates a personal brand roadmap, content topics, and tweet copy.",
+  "keywords": [
+    "openclaw",
+    "dashboard",
+    "openclaw-dashboard",
+    "openclaw-monitor"
+  ],
+  "author": "Efecan Basoz <efecan@sirkhet.com>",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack -p 3100",
