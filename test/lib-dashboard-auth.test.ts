@@ -1,11 +1,10 @@
-import assert from 'node:assert/strict';
-import test from 'node:test';
+import { expect, test } from 'vitest';
 
 import {
   getDangerousOperationsConfigError,
   getDashboardAuthConfig,
   isAuthorizedRequest,
-} from './dashboard-auth.ts';
+} from '@/lib/dashboard-auth';
 
 test('getDashboardAuthConfig reports configured auth when enabled and credentials exist', () => {
   const config = getDashboardAuthConfig({
@@ -14,7 +13,7 @@ test('getDashboardAuthConfig reports configured auth when enabled and credential
     DASHBOARD_AUTH_PASSWORD: 'secret',
   });
 
-  assert.deepEqual(config, {
+  expect(config).toEqual({
     enabled: true,
     configured: true,
     username: 'admin',
@@ -29,8 +28,7 @@ test('getDangerousOperationsConfigError requires auth when dangerous operations 
     DASHBOARD_AUTH_PASSWORD: '',
   });
 
-  assert.equal(
-    getDangerousOperationsConfigError(true, auth),
+  expect(getDangerousOperationsConfigError(true, auth)).toBe(
     'Dangerous operations require dashboard auth. Set DASHBOARD_AUTH_ENABLED=true and configure DASHBOARD_AUTH_USERNAME/DASHBOARD_AUTH_PASSWORD.',
   );
 });
@@ -43,7 +41,7 @@ test('isAuthorizedRequest accepts a matching basic auth header', () => {
   });
   const header = `Basic ${Buffer.from('admin:secret').toString('base64')}`;
 
-  assert.equal(isAuthorizedRequest(header, auth), true);
+  expect(isAuthorizedRequest(header, auth)).toBe(true);
 });
 
 test('isAuthorizedRequest rejects invalid credentials', () => {
@@ -54,5 +52,5 @@ test('isAuthorizedRequest rejects invalid credentials', () => {
   });
   const header = `Basic ${Buffer.from('admin:nope').toString('base64')}`;
 
-  assert.equal(isAuthorizedRequest(header, auth), false);
+  expect(isAuthorizedRequest(header, auth)).toBe(false);
 });

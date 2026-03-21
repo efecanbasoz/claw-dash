@@ -1,7 +1,6 @@
-import assert from 'node:assert/strict';
-import test from 'node:test';
+import { expect, test } from 'vitest';
 
-import { resolvePathWithinRoot } from './paths.ts';
+import { resolvePathWithinRoot } from '@/lib/paths';
 
 const root = '/workspace/root';
 
@@ -10,8 +9,8 @@ test('resolvePathWithinRoot allows a markdown file inside the root', () => {
     allowedExtensions: ['.md'],
   });
 
-  assert.equal(result?.relativePath, 'memory/notes/today.md');
-  assert.equal(result?.fullPath, '/workspace/root/memory/notes/today.md');
+  expect(result?.relativePath).toBe('memory/notes/today.md');
+  expect(result?.fullPath).toBe('/workspace/root/memory/notes/today.md');
 });
 
 test('resolvePathWithinRoot rejects absolute paths', () => {
@@ -19,7 +18,7 @@ test('resolvePathWithinRoot rejects absolute paths', () => {
     allowedExtensions: ['.md'],
   });
 
-  assert.equal(result, null);
+  expect(result).toBe(null);
 });
 
 test('resolvePathWithinRoot rejects parent-directory traversal', () => {
@@ -27,7 +26,7 @@ test('resolvePathWithinRoot rejects parent-directory traversal', () => {
     allowedExtensions: ['.md'],
   });
 
-  assert.equal(result, null);
+  expect(result).toBe(null);
 });
 
 test('resolvePathWithinRoot rejects blocked basenames', () => {
@@ -35,5 +34,5 @@ test('resolvePathWithinRoot rejects blocked basenames', () => {
     blockedBasenames: ['auth.json'],
   });
 
-  assert.equal(result, null);
+  expect(result).toBe(null);
 });

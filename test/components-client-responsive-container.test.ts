@@ -1,11 +1,10 @@
-import assert from 'node:assert/strict';
-import test from 'node:test';
 import React, { act } from 'react';
 import { hydrateRoot } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { JSDOM } from 'jsdom';
+import { expect, test } from 'vitest';
 
-import { ClientResponsiveContainer } from './client-responsive-container.ts';
+import { ClientResponsiveContainer } from '@/components/client-responsive-container';
 
 type ResponsiveContainerElementProps = Omit<
   React.ComponentProps<typeof ClientResponsiveContainer>,
@@ -41,14 +40,14 @@ function restoreGlobalValue(name: string, descriptor: PropertyDescriptor | undef
 test('restoreGlobalValue removes globals that were originally absent', () => {
   const name = '__codex_temp_missing_global__';
 
-  assert.equal(name in globalThis, false);
+  expect(name in globalThis).toBe(false);
 
   setGlobalValue(name, 123);
-  assert.equal((globalThis as Record<string, unknown>)[name], 123);
+  expect((globalThis as Record<string, unknown>)[name]).toBe(123);
 
   restoreGlobalValue(name, undefined);
 
-  assert.equal(name in globalThis, false);
+  expect(name in globalThis).toBe(false);
 });
 
 test('restoreGlobalValue restores accessor-backed globals without leaking a data property', () => {
@@ -68,13 +67,13 @@ test('restoreGlobalValue restores accessor-backed globals without leaking a data
 
   const restoredDescriptor = Object.getOwnPropertyDescriptor(globalThis, name);
 
-  assert.ok(restoredDescriptor);
-  assert.equal(typeof restoredDescriptor.get, 'function');
-  assert.equal('value' in restoredDescriptor, false);
-  assert.equal((globalThis as Record<string, unknown>)[name], 1);
+  expect(restoredDescriptor).toBeTruthy();
+  expect(typeof restoredDescriptor!.get).toBe('function');
+  expect('value' in restoredDescriptor!).toBe(false);
+  expect((globalThis as Record<string, unknown>)[name]).toBe(1);
 
   currentValue = 3;
-  assert.equal((globalThis as Record<string, unknown>)[name], 3);
+  expect((globalThis as Record<string, unknown>)[name]).toBe(3);
 
   Reflect.deleteProperty(globalThis, name);
 });
@@ -88,8 +87,8 @@ test('ClientResponsiveContainer omits chart children during server render', () =
     ),
   );
 
-  assert.match(html, /data-chart-placeholder="true"/);
-  assert.doesNotMatch(html, /data-chart-child="true"/);
+  expect(html).toMatch(/data-chart-placeholder="true"/);
+  expect(html).not.toMatch(/data-chart-child="true"/);
 });
 
 test('ClientResponsiveContainer hydrates the placeholder into chart content on the client', async () => {
@@ -129,12 +128,12 @@ test('ClientResponsiveContainer hydrates the placeholder into chart content on t
     const container = dom.window.document.getElementById('root');
     const recoverableErrors: unknown[] = [];
 
-    assert.ok(container);
-    assert.ok(container.querySelector('[data-chart-placeholder="true"]'));
+    expect(container).toBeTruthy();
+    expect(container!.querySelector('[data-chart-placeholder="true"]')).toBeTruthy();
 
     let root: ReturnType<typeof hydrateRoot> | undefined;
     await act(async () => {
-      root = hydrateRoot(container, element, {
+      root = hydrateRoot(container!, element, {
         onRecoverableError(error) {
           recoverableErrors.push(error);
         },
@@ -142,9 +141,9 @@ test('ClientResponsiveContainer hydrates the placeholder into chart content on t
       await Promise.resolve();
     });
 
-    assert.equal(recoverableErrors.length, 0);
-    assert.equal(container.querySelector('[data-chart-placeholder="true"]'), null);
-    assert.ok(container.querySelector('[data-chart-child="true"]'));
+    expect(recoverableErrors.length).toBe(0);
+    expect(container!.querySelector('[data-chart-placeholder="true"]')).toBe(null);
+    expect(container!.querySelector('[data-chart-child="true"]')).toBeTruthy();
 
     await act(async () => {
       root?.unmount();
@@ -205,11 +204,11 @@ test('ClientResponsiveContainer hydration test surfaces recoverable mismatches',
     const container = dom.window.document.getElementById('root');
     const recoverableErrors: unknown[] = [];
 
-    assert.ok(container);
+    expect(container).toBeTruthy();
 
     let root: ReturnType<typeof hydrateRoot> | undefined;
     await act(async () => {
-      root = hydrateRoot(container, element, {
+      root = hydrateRoot(container!, element, {
         onRecoverableError(error) {
           recoverableErrors.push(error);
         },
@@ -217,7 +216,7 @@ test('ClientResponsiveContainer hydration test surfaces recoverable mismatches',
       await Promise.resolve();
     });
 
-    assert.ok(recoverableErrors.length > 0);
+    expect(recoverableErrors.length > 0).toBe(true);
 
     await act(async () => {
       root?.unmount();
