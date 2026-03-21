@@ -9,6 +9,7 @@
     "openclaw-monitor"
   ],
   "author": "Efecan Basoz <efecan@sirkhet.com>",
+  "license": "Apache-2.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack -p 3100",
