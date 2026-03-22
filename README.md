@@ -1,41 +1,62 @@
 # Claw Dash
 
-Claw Dash is a self-hosted operations dashboard for monitoring and managing an OpenClaw workspace.
+> Self-hosted operations dashboard for OpenClaw workspaces.
 
-It provides pages and APIs for sessions, usage stats, cron jobs, memory files, git activity, and security posture snapshots.
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue?style=flat-square)](./LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org)
+
+Claw Dash is a self-hosted operations dashboard for monitoring and managing an OpenClaw workspace. It provides pages and APIs for sessions, usage stats, cron jobs, memory files, git activity, and security posture snapshots.
 
 <img width="2163" height="1103" alt="Claw-Dash" src="https://github.com/user-attachments/assets/e18078af-2ba7-4496-ad82-108aa4e019a8" />
 
+---
 
-## Highlights
+## Table of Contents
 
-- Session and token/cost analytics
-- Live activity feed
-- Cron inspection and control
-- Workspace memory browser/editor
-- Security and system overview panels
-- API-first architecture with Next.js route handlers
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [Usage](#usage)
+- [Security](#security)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
+
+## Features
+
+- **Session analytics** — Token and cost tracking with visual breakdowns
+- **Live activity feed** — Real-time workspace activity monitoring
+- **Cron inspection** — View and control scheduled jobs
+- **Memory browser** — Browse and edit workspace memory files
+- **Security overview** — System and security posture panels
+- **API-first** — All data exposed via Next.js route handlers
+
+---
 
 ## Tech Stack
 
-- Next.js 16 (App Router)
-- React 19 + TypeScript 5
-- Tailwind CSS v4 + shadcn-style UI patterns
-- Recharts + framer-motion
+- **Next.js 16** — App Router
+- **React 19** + **TypeScript 5**
+- **Tailwind CSS v4** + shadcn-style UI patterns
+- **Recharts** + **framer-motion**
 
-## Security Defaults
+---
 
-This project performs host-level reads and can execute operational commands.
-
-To reduce accidental exposure, sensitive endpoints are disabled by default.
-
-Enable them explicitly with:
+## Getting Started
 
 ```bash
-ENABLE_DANGEROUS_OPERATIONS=true
+git clone https://github.com/efecanbasoz/claw-dash.git
+cd claw-dash
+npm install
+npm run dev
 ```
 
-The dashboard also supports built-in Basic Auth. For any deployment that enables dangerous operations, auth must be configured or the sensitive endpoints will refuse to run.
+The app runs on `http://localhost:3100` by default.
+
+---
 
 ## Environment Variables
 
@@ -48,9 +69,9 @@ OPENCLAW_CONFIG_FILE=$HOME/.openclaw/openclaw.json
 CLAW_WORKSPACE_DIR=$HOME/.openclaw/workspace
 CLAW_REPOS_DIR=$HOME/.openclaw/workspace/repos
 ENABLE_DANGEROUS_OPERATIONS=false
-DASHBOARD_AUTH_ENABLED=true
-DASHBOARD_AUTH_USERNAME=admin
-DASHBOARD_AUTH_PASSWORD=change-me
+DASHBOARD_AUTH_ENABLED=***
+DASHBOARD_AUTH_USERNAME=***
+DASHBOARD_AUTH_PASSWORD=***
 ```
 
 Optional:
@@ -64,34 +85,57 @@ CLAW_MEMORY_DIR=
 CLAW_AUDIT_LOG_FILE=
 ```
 
-## Getting Started
+---
+
+## Usage
+
+### Scripts
 
 ```bash
-npm install
-npm run dev
+npm run dev        # Start development server
+npm run build      # Production build
+npm run start      # Start production server
+npm run lint       # Run linter
+npm run typecheck  # Type checking
+npm run test       # Run tests
 ```
 
-The app runs on `http://localhost:3100` by default.
+---
 
-## Scripts
+## Security
+
+### Defaults
+
+Sensitive endpoints are disabled by default. Enable them explicitly with:
 
 ```bash
-npm run dev
-npm run build
-npm run start
-npm run lint
-npm run typecheck
-npm run test
+ENABLE_DANGEROUS_OPERATIONS=true
 ```
 
-## Threat Model Notes
+The dashboard supports built-in Basic Auth. For any deployment that enables dangerous operations, auth must be configured or the sensitive endpoints will refuse to run.
 
-- Route handlers read local files and system metadata.
-- Some handlers execute local commands.
-- Dangerous operations now require both `ENABLE_DANGEROUS_OPERATIONS=true` and dashboard auth credentials.
-- Do not expose this dashboard publicly without network/auth controls.
-- Prefer running behind VPN, reverse proxy auth, or private network boundaries.
+### Threat Model
+
+- Route handlers read local files and system metadata
+- Some handlers execute local commands
+- Dangerous operations require both `ENABLE_DANGEROUS_OPERATIONS=true` and dashboard auth credentials
+- Do not expose this dashboard publicly without network/auth controls
+- Prefer running behind VPN, reverse proxy auth, or private network boundaries
+
+---
+
+## Contributing
+
+Contributions are welcome! Please open an issue first to discuss what you'd like to change.
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feat/my-feature`)
+3. Run `npm run typecheck && npm run test` to verify
+4. Commit your changes
+5. Push to the branch and open a Pull Request
+
+---
 
 ## License
 
-MIT
+[Apache-2.0](./LICENSE)
