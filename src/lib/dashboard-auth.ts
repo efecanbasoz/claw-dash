@@ -1,4 +1,4 @@
-import { timingSafeEqual, createHash } from 'node:crypto';
+import { timingSafeEqual } from 'node:crypto';
 
 export interface DashboardAuthConfig {
   enabled: boolean;
@@ -13,11 +13,18 @@ function getEnvValue(value: string | undefined): string {
   return value?.trim() ?? '';
 }
 
-// SEC-005: Compare fixed-length hashes to avoid length-based timing leaks
+// SEC-005: Pad variable-length inputs so timingSafeEqual can compare them
 function safeEqual(left: string, right: string): boolean {
-  const a = createHash('sha256').update(left).digest();
-  const b = createHash('sha256').update(right).digest();
-  return timingSafeEqual(a, b);
+  const a = Buffer.from(left);
+  const b = Buffer.from(right);
+  const maxLength = Math.max(a.length, b.length);
+  const paddedA = Buffer.alloc(maxLength);
+  const paddedB = Buffer.alloc(maxLength);
+
+  a.copy(paddedA);
+  b.copy(paddedB);
+
+  return timingSafeEqual(paddedA, paddedB) && a.length === b.length;
 }
 
 export function getDashboardAuthConfig(env: AuthEnv = process.env): DashboardAuthConfig {
